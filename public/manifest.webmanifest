@@ -1,0 +1,15 @@
+{
+  "name": "Hoya — Apprendre les langues",
+  "short_name": "Hoya",
+  "description": "Apprends les langues à ton rythme, gratuitement.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6ed",
+  "theme_color": "#08152e",
+  "icons": [
+    { "src": "/hoya-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
