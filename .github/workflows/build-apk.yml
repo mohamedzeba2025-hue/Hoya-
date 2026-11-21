@@ -1,6 +1,15 @@
 name: Build Hoya Android APK
 
 on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - ".github/workflows/build-apk.yml"
   workflow_dispatch:
   push:
     branches: [main, master]
