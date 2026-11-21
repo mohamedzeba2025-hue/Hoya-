@@ -3,3 +3,12 @@ dist
 .env
 .env.local
 .DS_Store
+
+# Android release signing material — never commit these files
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.b64
+hoya-release-base64.txt
+android/app/release/
