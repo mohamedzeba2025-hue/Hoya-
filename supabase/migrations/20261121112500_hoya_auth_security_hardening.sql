@@ -25,7 +25,6 @@ grant execute on function private.is_admin() to authenticated;
 -- Trigger-only function: remove direct RPC execution rights.
 revoke all on function public.handle_new_user() from public, anon, authenticated;
 
--- Replace policies to use the private helper; public read policies don't need admin checks.
 drop policy if exists "Admins manage courses" on public.courses;
 create policy "Admins manage courses"
   on public.courses for all to authenticated
@@ -65,6 +64,11 @@ create policy "Public read published lessons"
     )
   );
 
+drop policy if exists "Admins read progress" on public.lesson_progress;
+create policy "Admins read progress"
+  on public.lesson_progress for select to authenticated
+  using (private.is_admin());
+
 drop policy if exists "Admins manage profiles" on public.profiles;
 create policy "Admins manage profiles"
   on public.profiles for all to authenticated
@@ -85,7 +89,7 @@ create policy "Users update own profile"
 -- User-editable profile field only. Admin role is not writable through the client API.
 grant update (full_name) on public.profiles to authenticated;
 
--- Remove the old helper after policies have been moved.
+-- Remove the old helper after all policies are moved.
 drop function if exists public.is_admin();
 
 -- Indexes for foreign-key lookups flagged by the advisor.
