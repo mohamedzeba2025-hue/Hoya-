@@ -64,6 +64,15 @@ for (const [courseName, lessons] of courses) {
         !Number.isInteger(quiz.correct) || quiz.correct < 0 || quiz.correct >= quiz.options.length) {
       fail(courseName, day, "question, choix, réponse correcte ou explication du quiz invalide");
     }
+
+    if (Array.isArray(quiz?.options) && quiz.options.every(hasText)) {
+      const normalizedOptions = quiz.options.map(option =>
+        option.normalize("NFC").trim().replace(/\\s+/g, " ").toLocaleLowerCase("fr")
+      );
+      if (new Set(normalizedOptions).size !== normalizedOptions.length) {
+        fail(courseName, day, "les choix du quiz doivent être uniques (doublons détectés)");
+      }
+    }
   }
 
   for (let expected = 1; expected <= lessons.length; expected += 1) {
