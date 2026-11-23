@@ -2,7 +2,7 @@ import { exercises } from "../src/exercises.js";
 
 const languages = ["en", "es", "it"];
 const errors = [];
-const normalize = value => value.normalize("NFC").trim().replace(/\\s+/g, " ").toLocaleLowerCase("fr");
+const normalize = value => value.normalize("NFC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
 
 for (const language of languages) {
   const questions = exercises[language];
@@ -10,6 +10,7 @@ for (const language of languages) {
     errors.push(`${language}: exactement 5 questions sont requises`);
     continue;
   }
+  const errorCountBeforeLanguage = errors.length;
   const seenQuestions = new Set();
   questions.forEach((item, index) => {
     const label = `${language} question ${index + 1}`;
@@ -25,12 +26,12 @@ for (const language of languages) {
       errors.push(`${label}: index de réponse correcte hors limites`);
     }
   });
-  if (!errors.some(error => error.startsWith(`${language}:`))) {
+  if (errors.length === errorCountBeforeLanguage) {
     console.log(`[OK] ${language}: 5 questions, 4 choix, réponses indexées valides`);
   }
 }
 if (errors.length) {
-  console.error(errors.map(error => `[ÉCHEC] ${error}`).join("\\n"));
+  console.error(errors.map(error => `[ÉCHEC] ${error}`).join("\n"));
   process.exitCode = 1;
 } else {
   console.log("Validation structurelle des exercices réussie.");
