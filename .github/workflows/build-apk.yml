@@ -7,6 +7,7 @@ on:
     tags: ["v*"]
     paths:
       - "src/**"
+      - "scripts/**"
       - "public/**"
       - "package.json"
       - "package-lock.json"
@@ -30,6 +31,8 @@ jobs:
         run: npm install
       - name: Validate lesson content
         run: npm run validate:courses
+      - name: Validate exercise bank
+        run: npm run validate:exercises
       - name: Build web app
         run: npm run build
       - name: Add Android platform

@@ -1,28 +1,7 @@
-import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{BookOpen,Flame,Trophy,UserRound,ChevronRight,CheckCircle2,Languages,ArrowLeft,Home,Dumbbell,Settings,Star,Volume2}from'lucide-react';import'./styles.css';import{spanishLessons}from'./spanish-course.js';import{englishLessons}from'./english-course.js';import{italianLessons}from'./italian-course.js';
+import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{BookOpen,Flame,Trophy,UserRound,ChevronRight,CheckCircle2,Languages,ArrowLeft,Home,Dumbbell,Settings,Star,Volume2}from'lucide-react';import'./styles.css';import{spanishLessons}from'./spanish-course.js';import{englishLessons}from'./english-course.js';import{italianLessons}from'./italian-course.js';import{exercises}from'./exercises.js';
 const languages=[{id:'en',name:'Anglais',flag:'🇬🇧',tag:'From Zero to Conversation'},{id:'es',name:'Espagnol',flag:'🇪🇸',tag:'Español en 110 días'},{id:'it',name:'Italien',flag:'🇮🇹',tag:'Da zero alla conversazione'}];
 const lessons={en:{title:'Hello, nice to meet you',vocab:[['Hello','Bonjour'],['Good morning','Bonjour (matin)'],['My name is…','Je m’appelle…'],['What is your name?','Comment tu t’appelles ?'],['Nice to meet you','Enchanté(e)'],['How are you?','Comment vas-tu ?'],['I’m fine','Je vais bien'],['Thank you','Merci']],dialogue:[['A','Hello! What is your name?'],['B','My name is Alex. And you?'],['A','I’m Sam. Nice to meet you!'],['B','Nice to meet you, too.']]},es:{title:'Saluer et se présenter',vocab:[['Hola','Salut'],['Buenos días','Bonjour'],['Buenas tardes','Bonsoir'],['Me llamo…','Je m’appelle…'],['¿Cómo te llamas?','Comment tu t’appelles ?'],['Mucho gusto','Enchanté(e)'],['¿Cómo estás?','Comment vas-tu ?'],['Estoy bien','Je vais bien'],['Gracias','Merci']],dialogue:[['A','¡Hola! ¿Cómo te llamas?'],['B','Me llamo Ana. ¿Y tú?'],['A','Me llamo Luis. Mucho gusto.'],['B','¡Mucho gusto!']]},it:{title:'Fare conoscenza',vocab:[['Ciao','Salut'],['Buongiorno','Bonjour'],['Come ti chiami?','Comment tu t’appelles ?'],['Mi chiamo…','Je m’appelle…'],['Piacere','Enchanté(e)'],['Come stai?','Comment vas-tu ?'],['Sto bene','Je vais bien'],['Grazie','Merci']],dialogue:[['A','Ciao! Come ti chiami?'],['B','Mi chiamo Luca. E tu?'],['A','Mi chiamo Sara. Piacere!'],['B','Piacere!']]}};
-const courseData={en:englishLessons,es:spanishLessons,it:italianLessons};const exercises={
-en:[
-{question:'Que signifie « Hello » ?',options:['Bonjour','Merci','Au revoir','Bonne nuit'],correct:0},
-{question:'Comment dit-on « Merci » en anglais ?',options:['Please','Thank you','Sorry','Goodbye'],correct:1},
-{question:'Que signifie « Good morning » ?',options:['Bonsoir','Bonne nuit','Bonjour (matin)','À bientôt'],correct:2},
-{question:'Comment dit-on « Je m’appelle Sam » ?',options:['I am fine','My name is Sam','See you Sam','Thank you Sam'],correct:1},
-{question:'Que signifie « How are you? » ?',options:['Comment vas-tu ?','Quel âge as-tu ?','Où vas-tu ?','Comment tu t’appelles ?'],correct:0}
-],
-es:[
-{question:'Que signifie « Hola » ?',options:['Merci','Salut','Au revoir','Bonne nuit'],correct:1},
-{question:'Comment dit-on « Merci » en espagnol ?',options:['Por favor','Adiós','Gracias','Buenos días'],correct:2},
-{question:'Que signifie « Buenos días » ?',options:['Bonsoir','Bonne nuit','Bonjour','À bientôt'],correct:2},
-{question:'Que signifie « Me llamo Ana » ?',options:['Je vais bien','Je m’appelle Ana','Merci Ana','Salut Ana'],correct:1},
-{question:'Que signifie « ¿Cómo estás? » ?',options:['Comment vas-tu ?','Quel âge as-tu ?','Où habites-tu ?','Comment tu t’appelles ?'],correct:0}
-],
-it:[
-{question:'Que signifie « Ciao » ?',options:['Merci','Bonjour / Salut','Au revoir','Bonne nuit'],correct:1},
-{question:'Comment dit-on « Merci » en italien ?',options:['Prego','Scusa','Grazie','Buongiorno'],correct:2},
-{question:'Que signifie « Buongiorno » ?',options:['Bonsoir','Bonne nuit','Bonjour','À demain'],correct:2},
-{question:'Que signifie « Mi chiamo Luca » ?',options:['Je vais bien','Je m’appelle Luca','Merci Luca','Salut Luca'],correct:1},
-{question:'Que signifie « Come stai? » ?',options:['Comment vas-tu ?','Où vas-tu ?','Quel âge as-tu ?','Comment tu t’appelles ?'],correct:0}
-]};
+const courseData={en:englishLessons,es:spanishLessons,it:italianLessons};
 function readStored(key,fallback){try{const raw=localStorage.getItem(key);return raw===null?fallback:JSON.parse(raw)}catch{return fallback}}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function calculateStreak(days){const set=new Set(Array.isArray(days)?days:[]);let d=new Date();const key=(date)=>date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');if(!set.has(key(d)))d.setDate(d.getDate()-1);let count=0;while(set.has(key(d))){count++;d.setDate(d.getDate()-1)}return count}

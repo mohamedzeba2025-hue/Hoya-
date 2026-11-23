@@ -11,3 +11,9 @@
 ## 2026-11-21
 - Course validator and Spanish lesson sequence improvements: web/Android build workflows #55 and #56 succeeded.
 - Account/authentication and cloud-progress sync work remains in PR #2; its web CI #19 and Android build #2 succeeded on that branch, but it is not merged into main.
+
+## 2026-11-23
+- Extracted the five-question exercise banks for English, Spanish and Italian into `src/exercises.js` to make them independently testable.
+- Added `validate:exercises`: checks exact question count, nonempty prompts/choices, four choices per question, duplicate prompts/choices, and valid correct-answer indices.
+- Added exercise validation to Web CI, Android debug builds and signed-release workflow. Android debug CI now also triggers on script changes.
+- Local Node 22 validation passed for all three exercise banks (5 questions each, 4 unique options, correct-answer index in range). This is structural validation, not a linguistic or end-to-end test.
