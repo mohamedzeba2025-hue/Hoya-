@@ -1,5 +1,17 @@
 # Hoya development log
 
+## 2026-11-24
+- Removed the debug APK workflow's version-tag trigger and GitHub Release publishing step. The signed release workflow is now the sole workflow that publishes version-tag releases, preventing a race where a debug APK and signed APK/AAB both attempt to create the same GitHub Release.
+- Reduced debug-build workflow permissions from `contents: write` to `contents: read`; artifact upload does not require repository write access.
+- Verified before the change: latest main Web CI and Android debug APK runs both succeeded on commit `5bf0132`.
+- Post-change validation: pending GitHub Actions runs. No physical-device test was performed.
+
+## 2026-11-23
+- Extracted the five-question exercise banks for English, Spanish and Italian into `src/exercises.js` to make them independently testable.
+- Added `validate:exercises`: checks exact question count, nonempty prompts/choices, four choices per question, duplicate prompts/choices, and valid correct-answer indices.
+- Added exercise validation to Web CI, Android debug builds and signed-release workflow. Android debug CI now also triggers on script changes.
+- Local Node 22 validation passed for all three exercise banks (5 questions each, 4 unique options, correct-answer index in range). This is structural validation, not a linguistic or end-to-end test.
+
 ## 2026-11-22
 - Fixed stale React state updates in lesson completion, lesson XP, exercise score, and exercise XP using functional setters.
 - Reset the selected lesson and mini-quiz state when switching languages from either home or profile.
@@ -11,9 +23,3 @@
 ## 2026-11-21
 - Course validator and Spanish lesson sequence improvements: web/Android build workflows #55 and #56 succeeded.
 - Account/authentication and cloud-progress sync work remains in PR #2; its web CI #19 and Android build #2 succeeded on that branch, but it is not merged into main.
-
-## 2026-11-23
-- Extracted the five-question exercise banks for English, Spanish and Italian into `src/exercises.js` to make them independently testable.
-- Added `validate:exercises`: checks exact question count, nonempty prompts/choices, four choices per question, duplicate prompts/choices, and valid correct-answer indices.
-- Added exercise validation to Web CI, Android debug builds and signed-release workflow. Android debug CI now also triggers on script changes.
-- Local Node 22 validation passed for all three exercise banks (5 questions each, 4 unique options, correct-answer index in range). This is structural validation, not a linguistic or end-to-end test.
