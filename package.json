@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "android:sync": "npm run build && npx cap sync android",
     "validate:courses": "node scripts/validate-courses.js",
-    "validate:exercises": "node scripts/validate-exercises.js"
+    "validate:exercises": "node scripts/validate-exercises.js",
+    "test:progress": "node scripts/test-progress.js"
   },
   "dependencies": {
     "lucide-react": "0.468.0",

@@ -42,5 +42,7 @@ jobs:
         run: npm run validate:courses
       - name: Validate exercise bank
         run: npm run validate:exercises
+      - name: Test progress rewards
+        run: npm run test:progress
       - name: Build web app
         run: npm run build
