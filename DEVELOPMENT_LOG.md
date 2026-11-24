@@ -1,5 +1,12 @@
 # Hoya development log
 
+## 2026-11-24 (suite)
+- Updated Web CI path filters so changes to `package-lock.json`, the Android debug workflow, or the signed Android release workflow also trigger validation and a web build.
+- Confirmed after the workflow changes: Android debug build run #45379829395 succeeded, including course/exercise validation, Vite build, Capacitor sync, Gradle APK build, and artifact upload.
+- Confirmed Web CI run #45380001100 succeeded, including course/exercise validation and Vite build.
+- Debug APK workflow no longer publishes a version-tag release; signed APK/AAB publication remains owned by `release-android.yml`.
+- No physical-device test or signed release build was performed in this run.
+
 ## 2026-11-24
 - Removed the debug APK workflow's version-tag trigger and GitHub Release publishing step. The signed release workflow is now the sole workflow that publishes version-tag releases, preventing a race where a debug APK and signed APK/AAB both attempt to create the same GitHub Release.
 - Reduced debug-build workflow permissions from `contents: write` to `contents: read`; artifact upload does not require repository write access.
