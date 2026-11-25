@@ -2,7 +2,7 @@ const languages = new Set(["en", "es", "it"]);
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
 function boundedInteger(value, minimum, maximum, fallback) {
-  return Number.isInteger(value) ? Math.min(maximum, Math.max(minimum, value)) : fallback;
+  return Number.isInteger(value) && value >= minimum && value <= maximum ? value : fallback;
 }
 
 function isDateKey(value) {
