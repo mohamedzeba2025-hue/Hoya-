@@ -34,6 +34,8 @@ jobs:
         run: npm run validate:exercises
       - name: Test progress rewards
         run: npm run test:progress
+      - name: Test persisted-state validation
+        run: npm run test:storage
       - name: Build web app
         run: npm run build
       - name: Add Android platform

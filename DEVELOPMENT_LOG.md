@@ -1,3 +1,8 @@
+## 2026-11-25
+- Added defensive parsing for locally persisted learner state: course completion keys, exercise progress, awarded-exercise flags, activity dates, profile name and XP are validated before React state is initialized.
+- Added Node tests for malformed/out-of-range storage values and wired them into Web CI, Android debug builds and signed Android release builds.
+- GitHub Actions verification is pending for this commit. No local build or physical-device test was performed in this run.
+
 # Hoya development log
 
 ## 2026-11-24 (suite)
