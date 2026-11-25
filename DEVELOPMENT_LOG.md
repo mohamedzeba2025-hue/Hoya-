@@ -1,9 +1,11 @@
 ## 2026-11-25
-- Added defensive parsing for locally persisted learner state: course completion keys, exercise progress, awarded-exercise flags, activity dates, profile name and XP are validated before React state is initialized.
-- Added Node tests for malformed/out-of-range storage values and wired them into Web CI, Android debug builds and signed Android release builds.
-- CI exposed two test implementation issues before the app build stage: a profile-name fixture needed JSON encoding, then the validator regexes needed single escaping in the generated source. Both were corrected. A further CI assertion showed that out-of-range exercise values should reset to defaults rather than be clamped into a valid-looking final question; the sanitizer now rejects out-of-range integers. Final verification is pending. No local build or physical-device test was performed in this run.
-
-# Hoya development log
+- Added defensive parsing for locally persisted learner state in `src/storage.js`: validates course-completion keys, exercise progress, awarded-exercise flags, activity dates, profile name and XP before React state is initialized; storage access failures now fall back safely.
+- Added `npm run test:storage` and wired it into Web CI, Android debug builds and signed Android release builds.
+- GitHub Actions initially caught three defects in the new test/sanitizer implementation (a non-JSON fixture, over-escaped validation regexes, and clamping out-of-range exercise values). Each was corrected; the final run passed.
+- Final verification on commit `fbb13d3`: Web CI #33 passed course/exercise validation, progress tests, storage tests and Vite build; Android APK #68 passed the same checks plus Capacitor sync, Gradle debug APK compilation and artifact upload (3.46 MB).
+- No local build, signed release build, or physical-device test was performed.
+- `npm install` reports 7 dependency vulnerabilities (4 moderate, 2 high, 1 critical); package-level audit and safe remediation remain outstanding.
+- Supabase advisor still flags leaked-password protection as disabled. PR #2 remains open and non-mergeable; keep it isolated until its account-sync changes are reconciled with current main and verified end-to-end.
 
 ## 2026-11-24 (suite)
 - Updated Web CI path filters so changes to `package-lock.json`, the Android debug workflow, or the signed Android release workflow also trigger validation and a web build.
