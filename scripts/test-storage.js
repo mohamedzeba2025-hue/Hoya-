@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readStored, readStoredXP } from "../src/storage.js";
+import { readStored, readStoredXP, readStoredCourseSelection } from "../src/storage.js";
 
 class MemoryStorage {
   constructor(entries = {}) { this.entries = new Map(Object.entries(entries)); }
@@ -7,6 +7,29 @@ class MemoryStorage {
 }
 
 const fallback = { safe: true };
+assert.equal(readStored("hoya_selected_language", "es", new MemoryStorage({
+  hoya_selected_language: JSON.stringify("it"),
+})), "it");
+assert.equal(readStored("hoya_selected_language", "es", new MemoryStorage({
+  hoya_selected_language: JSON.stringify("fr"),
+})), "es");
+assert.equal(readStored("hoya_selected_day", 1, new MemoryStorage({
+  hoya_selected_day: JSON.stringify(42),
+})), 42);
+assert.equal(readStored("hoya_selected_day", 1, new MemoryStorage({
+  hoya_selected_day: JSON.stringify(0),
+})), 1);
+assert.equal(readStored("hoya_selected_day", 1, new MemoryStorage({
+  hoya_selected_day: JSON.stringify(111),
+})), 1);
+assert.deepEqual(readStoredCourseSelection(new MemoryStorage({
+  hoya_selected_language: JSON.stringify("en"),
+  hoya_selected_day: JSON.stringify(105),
+})), { language: "en", day: 90 });
+assert.deepEqual(readStoredCourseSelection(new MemoryStorage({
+  hoya_selected_language: JSON.stringify("es"),
+  hoya_selected_day: JSON.stringify(105),
+})), { language: "es", day: 105 });
 assert.equal(readStored("missing", fallback, new MemoryStorage()), fallback);
 assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: '"  Ada  "' })), "Ada");
 assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: JSON.stringify("   ") })), "Apprenant");

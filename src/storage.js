@@ -12,6 +12,14 @@ function isDateKey(value) {
 }
 
 function sanitizeStoredValue(key, value, fallback) {
+  if (key === "hoya_selected_language") {
+    return languages.has(value) ? value : fallback;
+  }
+
+  if (key === "hoya_selected_day") {
+    return boundedInteger(value, 1, 110, fallback);
+  }
+
   if (key === "hoya_user_name") {
     return typeof value === "string" ? value.trim().slice(0, 40) || fallback : fallback;
   }
@@ -69,6 +77,14 @@ export function readStored(key, fallback, storage) {
   } catch {
     return fallback;
   }
+}
+
+const courseDayLimits = { en: 90, es: 110, it: 90 };
+
+export function readStoredCourseSelection(storage) {
+  const language = readStored("hoya_selected_language", "es", storage);
+  const day = readStored("hoya_selected_day", 1, storage);
+  return { language, day: Math.min(day, courseDayLimits[language]) };
 }
 
 export function readStoredXP(fallback = 120, storage) {
