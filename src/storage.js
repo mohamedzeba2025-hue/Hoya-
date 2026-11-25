@@ -6,7 +6,7 @@ function boundedInteger(value, minimum, maximum, fallback) {
 }
 
 function isDateKey(value) {
-  if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const timestamp = Date.parse(`${value}T00:00:00.000Z`);
   return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === value;
 }
@@ -20,7 +20,7 @@ function sanitizeStoredValue(key, value, fallback) {
     if (!isRecord(value)) return fallback;
     return Object.fromEntries(
       Object.entries(value).filter(([lessonKey, completed]) =>
-        /^(en|es|it)-[1-9]\\d*$/.test(lessonKey) && completed === true
+        /^(en|es|it)-[1-9]\d*$/.test(lessonKey) && completed === true
       )
     );
   }
