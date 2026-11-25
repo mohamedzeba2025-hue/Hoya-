@@ -60,9 +60,10 @@ function sanitizeStoredValue(key, value, fallback) {
   return value;
 }
 
-export function readStored(key, fallback, storage = globalThis.localStorage) {
+export function readStored(key, fallback, storage) {
   try {
-    const raw = storage?.getItem(key);
+    const target = storage === undefined ? globalThis.localStorage : storage;
+    const raw = target?.getItem(key);
     if (raw === null || raw === undefined) return fallback;
     return sanitizeStoredValue(key, JSON.parse(raw), fallback);
   } catch {
@@ -70,9 +71,10 @@ export function readStored(key, fallback, storage = globalThis.localStorage) {
   }
 }
 
-export function readStoredXP(fallback = 120, storage = globalThis.localStorage) {
+export function readStoredXP(fallback = 120, storage) {
   try {
-    const raw = storage?.getItem("hoya_xp");
+    const target = storage === undefined ? globalThis.localStorage : storage;
+    const raw = target?.getItem("hoya_xp");
     if (raw === null || raw === undefined || raw.trim() === "") return fallback;
     const value = Number(raw);
     if (!Number.isFinite(value) || value < 0) return fallback;
