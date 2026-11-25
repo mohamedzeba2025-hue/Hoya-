@@ -9,8 +9,8 @@ class MemoryStorage {
 const fallback = { safe: true };
 assert.equal(readStored("missing", fallback, new MemoryStorage()), fallback);
 assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: '"  Ada  "' })), "Ada");
-assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: "   " })), "Apprenant");
-assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: "7".repeat(60) })).length, 40);
+assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: JSON.stringify("   ") })), "Apprenant");
+assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: JSON.stringify("7".repeat(60)) })).length, 40);
 
 const done = readStored("hoya_done", {}, new MemoryStorage({
   hoya_done: JSON.stringify({ "es-1": true, "fr-1": true, "en-2": false, "it-3": true, broken: true }),
@@ -43,6 +43,7 @@ assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "42.9" })), 42);
 assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "-5" })), 120);
 assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "Infinity" })), 120);
 assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "not-a-number" })), 120);
+assert.equal(readStored("hoya_done", fallback, new MemoryStorage({ hoya_done: "{" })), fallback);
 assert.equal(readStored("hoya_done", fallback, { getItem() { throw new Error("storage unavailable"); } }), fallback);
 
 console.log("Storage tests passed: malformed JSON, bounded exercise state, owned course keys, activity dates and XP.");
