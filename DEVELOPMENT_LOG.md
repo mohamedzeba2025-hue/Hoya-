@@ -37,3 +37,15 @@
 ## 2026-11-21
 - Course validator and Spanish lesson sequence improvements: web/Android build workflows #55 and #56 succeeded.
 - Account/authentication and cloud-progress sync work remains in PR #2; its web CI #19 and Android build #2 succeeded on that branch, but it is not merged into main.
+
+## 2026-11-26
+- Fixed a streak-tracking bug: previously, a completed lesson or exercise only counted as an activity day when its one-time XP reward was awarded. Repeating already-completed learning now still records the day without granting duplicate XP.
+- Added `recordActivityDay` in `src/progress.js`: validates the date-key shape, prevents same-day duplicates, and keeps at most 365 activity days.
+- Added unit coverage in `scripts/test-progress.js` for first activity, same-day idempotency, invalid date input, and 365-day retention.
+- Updated `src/main.jsx` to record activity on every successful lesson and completed exercise, independently of whether XP is awarded.
+- Commits: `4ef2882` (activity helper), `1841ef3` (tests), `d763ff2` (app integration), `7ee0bc3` (date-regex correction).
+- Two intermediate CI attempts failed because the initial date regex was over-escaped; corrected in `7ee0bc3`. Final Web CI run #45805546378 passed all content, exercise, progress, storage tests and Vite build. Final Android run #45805546475 passed the same checks, Capacitor sync, Gradle debug APK build and artifact upload (3,458,498 bytes).
+- Supabase advisor check: no health findings; leaked-password protection remains disabled (security WARN); performance advisor reports 7 tables with multiple permissive RLS policies and 9 currently unused indexes. No database policy or index was changed in this run.
+- PR #1 is 4 commits ahead / 28 behind main; PR #2 is 24 ahead / 28 behind. Both remain divergent and were not merged.
+- No local build, signed release build, or physical-device test was performed.
+- Next: audit dependency vulnerabilities, reconcile account-sync/auth branches with current main, and enable leaked-password protection after confirming the Auth configuration impact.
