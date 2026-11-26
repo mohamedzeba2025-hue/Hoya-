@@ -46,3 +46,13 @@ export function awardExerciseXP({
     awarded: true,
   };
 }
+
+
+export function recordActivityDay(activityDays, dayKey) {
+  const days = Array.isArray(activityDays) ? activityDays : [];
+  if (typeof dayKey !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(dayKey)) {
+    return days.slice(-365);
+  }
+  if (days.includes(dayKey)) return days.slice(-365);
+  return [...days, dayKey].slice(-365);
+}
