@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { isValidDateKey } from "../src/date.js";
 import { awardExerciseXP, awardLessonXP, recordActivityDay } from "../src/progress.js";
 
 const firstLesson = awardLessonXP({
@@ -85,11 +86,20 @@ assert.equal(malformedState.awarded, true);
 assert.equal(malformedState.xp, 20);
 assert.equal(Array.isArray(malformedState.completedLessons), false);
 
+assert.equal(isValidDateKey("2024-02-29"), true);
+assert.equal(isValidDateKey("2025-02-29"), false);
+assert.equal(isValidDateKey("2026-02-30"), false);
+assert.equal(isValidDateKey("2026-2-3"), false);
 
 const firstActivity = recordActivityDay([], "2026-11-26");
 assert.deepEqual(firstActivity, ["2026-11-26"]);
 assert.deepEqual(recordActivityDay(firstActivity, "2026-11-26"), firstActivity);
 assert.deepEqual(recordActivityDay(firstActivity, "invalid-date"), firstActivity);
+assert.deepEqual(recordActivityDay(firstActivity, "2026-02-30"), firstActivity);
+assert.deepEqual(
+  recordActivityDay(["2026-02-30", "2026-11-25", "2026-11-25", "not-a-date"], "2026-11-26"),
+  ["2026-11-25", "2026-11-26"]
+);
 
 const previous365Days = Array.from({ length: 365 }, (_, index) =>
   new Date(Date.UTC(2025, 0, 1 + index)).toISOString().slice(0, 10)
@@ -99,4 +109,4 @@ assert.equal(nextActivity.length, 365);
 assert.equal(nextActivity.at(-1), "2026-11-26");
 assert.equal(nextActivity.includes(previous365Days[0]), false);
 
-console.log("Progress reward tests passed: lesson idempotency, exercise idempotency, score bounds and malformed state.");
+console.log("Progress tests passed: XP idempotency, score bounds, strict calendar dates and 365-day activity history.");

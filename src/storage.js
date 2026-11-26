@@ -1,14 +1,10 @@
+import { isValidDateKey } from "./date.js";
+
 const languages = new Set(["en", "es", "it"]);
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
 function boundedInteger(value, minimum, maximum, fallback) {
   return Number.isInteger(value) && value >= minimum && value <= maximum ? value : fallback;
-}
-
-function isDateKey(value) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const timestamp = Date.parse(`${value}T00:00:00.000Z`);
-  return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === value;
 }
 
 function sanitizeStoredValue(key, value, fallback) {
@@ -62,7 +58,7 @@ function sanitizeStoredValue(key, value, fallback) {
 
   if (key === "hoya_activity_days") {
     if (!Array.isArray(value)) return fallback;
-    return [...new Set(value.filter(isDateKey))].slice(-365);
+    return [...new Set(value.filter(day => isValidDateKey(day)))].sort().slice(-365);
   }
 
   return value;

@@ -58,9 +58,12 @@ const awarded = readStored("hoya_exercise_xp_awarded", {}, new MemoryStorage({
 assert.deepEqual(awarded, { en: true, it: true });
 
 const days = readStored("hoya_activity_days", [], new MemoryStorage({
-  hoya_activity_days: JSON.stringify(["2026-11-24", "2026-02-30", "2026-11-24", "not-a-date", 42, "2026-11-25"]),
+  hoya_activity_days: JSON.stringify([
+    "2026-11-24", "2026-02-30", "2026-11-24", "not-a-date", 42,
+    "2026-11-25", "2024-02-29", "2025-02-29"
+  ]),
 }));
-assert.deepEqual(days, ["2026-11-24", "2026-11-25"]);
+assert.deepEqual(days, ["2024-02-29", "2026-11-24", "2026-11-25"]);
 
 assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "42.9" })), 42);
 assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "-5" })), 120);
@@ -69,4 +72,4 @@ assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "not-a-number" })), 
 assert.equal(readStored("hoya_done", fallback, new MemoryStorage({ hoya_done: "{" })), fallback);
 assert.equal(readStored("hoya_done", fallback, { getItem() { throw new Error("storage unavailable"); } }), fallback);
 
-console.log("Storage tests passed: malformed JSON, bounded exercise state, owned course keys, activity dates and XP.");
+console.log("Storage tests passed: malformed JSON, bounded exercise state, owned course keys, strict activity dates and XP.");

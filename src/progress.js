@@ -1,3 +1,5 @@
+import { isValidDateKey } from "./date.js";
+
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const nonNegativeInteger = (value, fallback = 0) => {
   const number = Number(value);
@@ -47,12 +49,13 @@ export function awardExerciseXP({
   };
 }
 
-
 export function recordActivityDay(activityDays, dayKey) {
   const days = Array.isArray(activityDays) ? activityDays : [];
-  if (typeof dayKey !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dayKey)) {
-    return days.slice(-365);
+  const normalizedDays = [...new Set(days.filter(day => isValidDateKey(day)))].sort();
+
+  if (!isValidDateKey(dayKey) || normalizedDays.includes(dayKey)) {
+    return normalizedDays.slice(-365);
   }
-  if (days.includes(dayKey)) return days.slice(-365);
-  return [...days, dayKey].slice(-365);
+
+  return [...normalizedDays, dayKey].sort().slice(-365);
 }
