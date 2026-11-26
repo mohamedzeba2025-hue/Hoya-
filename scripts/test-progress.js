@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { awardExerciseXP, awardLessonXP } from "../src/progress.js";
+import { awardExerciseXP, awardLessonXP, recordActivityDay } from "../src/progress.js";
 
 const firstLesson = awardLessonXP({
   completedLessons: {},
@@ -84,5 +84,19 @@ const malformedState = awardLessonXP({
 assert.equal(malformedState.awarded, true);
 assert.equal(malformedState.xp, 20);
 assert.equal(Array.isArray(malformedState.completedLessons), false);
+
+
+const firstActivity = recordActivityDay([], "2026-11-26");
+assert.deepEqual(firstActivity, ["2026-11-26"]);
+assert.deepEqual(recordActivityDay(firstActivity, "2026-11-26"), firstActivity);
+assert.deepEqual(recordActivityDay(firstActivity, "invalid-date"), firstActivity);
+
+const previous365Days = Array.from({ length: 365 }, (_, index) =>
+  new Date(Date.UTC(2025, 0, 1 + index)).toISOString().slice(0, 10)
+);
+const nextActivity = recordActivityDay(previous365Days, "2026-11-26");
+assert.equal(nextActivity.length, 365);
+assert.equal(nextActivity.at(-1), "2026-11-26");
+assert.equal(nextActivity.includes(previous365Days[0]), false);
 
 console.log("Progress reward tests passed: lesson idempotency, exercise idempotency, score bounds and malformed state.");
