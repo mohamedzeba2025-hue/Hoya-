@@ -2,7 +2,6 @@
   "appId": "com.mohamedzeba.hoya",
   "appName": "Hoya",
   "webDir": "dist",
-  "bundledWebRuntime": false,
   "android": {
     "allowMixedContent": false
   }

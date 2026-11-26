@@ -55,3 +55,7 @@
 - Migrated GitHub Actions to current Node 24-compatible major releases: checkout v7, setup-node v7, setup-java v6, and upload-artifact v7.
 - The previous successful CI logs showed Node.js 20 deprecation warnings for the old action majors; the updated action.yml files explicitly use Node 24.
 - The Web CI and Android APK build will verify compatibility on this commit. No signed release was triggered.
+
+## 2026-11-26 (Capacitor configuration cleanup)
+- Removed the deprecated `bundledWebRuntime` option from `capacitor.config.json`; Capacitor 6 reports that the option is obsolete and safe to remove.
+- Web CI and Android debug builds will verify the configuration change. The remaining Gradle flatDir and Android SDK XML warnings are upstream/toolchain warnings and were not altered here.
