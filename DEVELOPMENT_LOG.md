@@ -49,3 +49,9 @@
 - PR #1 is 4 commits ahead / 28 behind main; PR #2 is 24 ahead / 28 behind. Both remain divergent and were not merged.
 - No local build, signed release build, or physical-device test was performed.
 - Next: audit dependency vulnerabilities, reconcile account-sync/auth branches with current main, and enable leaked-password protection after confirming the Auth configuration impact.
+
+
+## 2026-11-26 (Actions runtime maintenance)
+- Migrated GitHub Actions to current Node 24-compatible major releases: checkout v7, setup-node v7, setup-java v6, and upload-artifact v7.
+- The previous successful CI logs showed Node.js 20 deprecation warnings for the old action majors; the updated action.yml files explicitly use Node 24.
+- The Web CI and Android APK build will verify compatibility on this commit. No signed release was triggered.
