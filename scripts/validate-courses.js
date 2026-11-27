@@ -1,11 +1,12 @@
 import { englishLessons } from "../src/english-course.js";
 import { spanishLessons } from "../src/spanish-course.js";
 import { italianLessons } from "../src/italian-course.js";
+import { COURSE_DAY_LIMITS } from "../src/course-rules.js";
 
 const courses = [
-  ["Anglais", englishLessons],
-  ["Espagnol", spanishLessons],
-  ["Italien", italianLessons],
+  ["en", "Anglais", englishLessons],
+  ["es", "Espagnol", spanishLessons],
+  ["it", "Italien", italianLessons],
 ];
 
 let errors = 0;
@@ -15,10 +16,14 @@ const fail = (course, day, message) => {
 };
 const hasText = value => typeof value === "string" && value.trim().length > 0;
 
-for (const [courseName, lessons] of courses) {
+for (const [language, courseName, lessons] of courses) {
   if (!Array.isArray(lessons) || lessons.length === 0) {
     fail(courseName, "—", "le cours doit contenir au moins une leçon");
     continue;
+  }
+
+  if (COURSE_DAY_LIMITS[language] !== lessons.length) {
+    fail(courseName, "—", `la limite de progression (${COURSE_DAY_LIMITS[language]}) doit correspondre au nombre de leçons (${lessons.length})`);
   }
 
   const seenDays = new Set();
