@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { isValidDateKey } from "../src/date.js";
 import { awardExerciseXP, awardLessonXP, recordActivityDay } from "../src/progress.js";
+import { isValidLessonKey } from "../src/course-rules.js";
 
 const firstLesson = awardLessonXP({
   completedLessons: {},
@@ -28,6 +29,17 @@ const nextLesson = awardLessonXP({
 });
 assert.equal(nextLesson.awarded, true);
 assert.equal(nextLesson.xp, 160);
+
+assert.equal(isValidLessonKey("en-1"), true);
+assert.equal(isValidLessonKey("en-90"), true);
+assert.equal(isValidLessonKey("es-110"), true);
+assert.equal(isValidLessonKey("it-90"), true);
+for (const invalidKey of ["en-91", "es-111", "it-91", "fr-1", "es-0", "es-01", "en-999999999999999999999"]) {
+  assert.equal(isValidLessonKey(invalidKey), false, invalidKey);
+  const rejected = awardLessonXP({ completedLessons: {}, xp: 50, lessonKey: invalidKey });
+  assert.equal(rejected.awarded, false, invalidKey);
+  assert.equal(rejected.xp, 50, invalidKey);
+}
 
 const firstExercise = awardExerciseXP({
   awardedExercises: {},

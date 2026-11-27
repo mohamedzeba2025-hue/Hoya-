@@ -38,9 +38,16 @@ assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_
 assert.equal(readStored("hoya_user_name", "Apprenant", new MemoryStorage({ hoya_user_name: JSON.stringify("7".repeat(60)) })).length, 40);
 
 const done = readStored("hoya_done", {}, new MemoryStorage({
-  hoya_done: JSON.stringify({ "es-1": true, "fr-1": true, "en-2": false, "it-3": true, broken: true }),
+  hoya_done: JSON.stringify({
+    "es-1": true, "fr-1": true, "en-2": false, "it-3": true, broken: true,
+    "en-90": true, "es-110": true, "it-90": true,
+    "en-91": true, "es-111": true, "it-91": true, "es-0": true, "en-01": true,
+  }),
 }));
-assert.deepEqual(done, { "es-1": true, "it-3": true });
+assert.deepEqual(done, {
+  "es-1": true, "it-3": true,
+  "en-90": true, "es-110": true, "it-90": true,
+});
 
 const exercises = readStored("hoya_exercise_progress", {}, new MemoryStorage({
   hoya_exercise_progress: JSON.stringify({

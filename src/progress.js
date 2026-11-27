@@ -1,4 +1,5 @@
 import { isValidDateKey } from "./date.js";
+import { isValidLessonKey } from "./course-rules.js";
 
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const nonNegativeInteger = (value, fallback = 0) => {
@@ -9,7 +10,7 @@ const nonNegativeInteger = (value, fallback = 0) => {
 export function awardLessonXP({ completedLessons, xp, lessonKey, points = 20 }) {
   const completed = isRecord(completedLessons) ? completedLessons : {};
   const currentXP = nonNegativeInteger(xp);
-  if (typeof lessonKey !== "string" || !lessonKey.trim() || completed[lessonKey]) {
+  if (!isValidLessonKey(lessonKey) || completed[lessonKey]) {
     return { completedLessons: completed, xp: currentXP, points: 0, awarded: false };
   }
 

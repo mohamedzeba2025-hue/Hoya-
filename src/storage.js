@@ -1,4 +1,5 @@
 import { isValidDateKey } from "./date.js";
+import { COURSE_DAY_LIMITS, isValidLessonKey } from "./course-rules.js";
 
 const languages = new Set(["en", "es", "it"]);
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
@@ -24,7 +25,7 @@ function sanitizeStoredValue(key, value, fallback) {
     if (!isRecord(value)) return fallback;
     return Object.fromEntries(
       Object.entries(value).filter(([lessonKey, completed]) =>
-        /^(en|es|it)-[1-9]\d*$/.test(lessonKey) && completed === true
+        isValidLessonKey(lessonKey) && completed === true
       )
     );
   }
@@ -75,12 +76,10 @@ export function readStored(key, fallback, storage) {
   }
 }
 
-const courseDayLimits = { en: 90, es: 110, it: 90 };
-
 export function readStoredCourseSelection(storage) {
   const language = readStored("hoya_selected_language", "es", storage);
   const day = readStored("hoya_selected_day", 1, storage);
-  return { language, day: Math.min(day, courseDayLimits[language]) };
+  return { language, day: Math.min(day, COURSE_DAY_LIMITS[language]) };
 }
 
 export function readStoredXP(fallback = 120, storage) {
