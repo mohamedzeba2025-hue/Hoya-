@@ -95,3 +95,29 @@ export function readStoredXP(fallback = 120, storage) {
     return fallback;
   }
 }
+
+
+export function writeStored(key, value, storage) {
+  try {
+    const target = storage === undefined ? globalThis.localStorage : storage;
+    if (!target || typeof target.setItem !== "function") return false;
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) return false;
+    target.setItem(key, serialized);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function removeStored(keys, storage) {
+  try {
+    const target = storage === undefined ? globalThis.localStorage : storage;
+    if (!target || typeof target.removeItem !== "function" || !Array.isArray(keys)) return false;
+    if (!keys.every(key => typeof key === "string" && key.length > 0)) return false;
+    for (const key of keys) target.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+}

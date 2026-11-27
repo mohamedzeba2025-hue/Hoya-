@@ -59,3 +59,13 @@
 ## 2026-11-26 (Capacitor configuration cleanup)
 - Removed the deprecated `bundledWebRuntime` option from `capacitor.config.json`; Capacitor 6 reports that the option is obsolete and safe to remove.
 - Web CI and Android debug builds will verify the configuration change. The remaining Gradle flatDir and Android SDK XML warnings are upstream/toolchain warnings and were not altered here.
+
+
+## 2026-11-27
+- Inspected current `main` before changes: head `3b76dbb`; latest Web CI run #45822518139 and Android Debug run #45822518193 both completed successfully, including the full validation/build steps.
+- Found a persistence UX gap in the real app: normal writes silently swallowed localStorage failures, and the profile reset called `removeItem` without a guard. A learner could believe progress was saved when the device denied storage.
+- Added tested `writeStored` and `removeStored` helpers in `src/storage.js`; all progress/profile writes now use the safe helper, reset is guarded, and the app displays a clear warning if local persistence fails.
+- Extended `scripts/test-storage.js` to cover successful JSON/XP writes, removals, unavailable storage, quota errors and malformed removal requests.
+- Supabase read-only verification: the security migration from PR #1 is already reflected in the active database (private admin helper exists; public helper is absent; anon cannot execute admin/trigger helpers; authenticated users have only the `full_name` column UPDATE grant). Security advisor currently reports only leaked-password protection disabled. No database changes were made.
+- Local clone/build was not possible in this run because the execution environment could not resolve `github.com`; the updated storage tests and Web/Android builds are pending GitHub Actions on this commit.
+- Next priorities: reconcile account-sync PR #2 without cross-account progress merging, establish a committed lockfile/reproducible dependency install, and enable leaked-password protection in Supabase Auth settings.

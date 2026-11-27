@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
-import { readStored, readStoredXP, readStoredCourseSelection } from "../src/storage.js";
+import { readStored, readStoredXP, readStoredCourseSelection, writeStored, removeStored } from "../src/storage.js";
 
 class MemoryStorage {
   constructor(entries = {}) { this.entries = new Map(Object.entries(entries)); }
   getItem(key) { return this.entries.has(key) ? this.entries.get(key) : null; }
+  setItem(key, value) { this.entries.set(key, String(value)); }
+  removeItem(key) { this.entries.delete(key); }
 }
 
 const fallback = { safe: true };
@@ -72,4 +74,23 @@ assert.equal(readStoredXP(120, new MemoryStorage({ hoya_xp: "not-a-number" })), 
 assert.equal(readStored("hoya_done", fallback, new MemoryStorage({ hoya_done: "{" })), fallback);
 assert.equal(readStored("hoya_done", fallback, { getItem() { throw new Error("storage unavailable"); } }), fallback);
 
-console.log("Storage tests passed: malformed JSON, bounded exercise state, owned course keys, strict activity dates and XP.");
+const writableStorage = new MemoryStorage();
+assert.equal(writeStored("hoya_xp", 42, writableStorage), true);
+assert.equal(readStoredXP(0, writableStorage), 42);
+assert.equal(writeStored("hoya_done", { "en-1": true }, writableStorage), true);
+assert.deepEqual(readStored("hoya_done", {}, writableStorage), { "en-1": true });
+assert.equal(removeStored(["hoya_xp", "hoya_done"], writableStorage), true);
+assert.equal(readStoredXP(120, writableStorage), 120);
+assert.deepEqual(readStored("hoya_done", {}, writableStorage), {});
+
+const blockedStorage = {
+  setItem() { throw new Error("storage quota exceeded"); },
+  removeItem() { throw new Error("storage unavailable"); },
+};
+assert.equal(writeStored("hoya_done", {}, blockedStorage), false);
+assert.equal(removeStored(["hoya_done"], blockedStorage), false);
+assert.equal(writeStored("hoya_done", {}, null), false);
+assert.equal(removeStored(["hoya_done"], null), false);
+assert.equal(removeStored([""], writableStorage), false);
+
+console.log("Storage tests passed: malformed JSON, bounded exercise state, strict dates, XP and safe writes/removals.");
