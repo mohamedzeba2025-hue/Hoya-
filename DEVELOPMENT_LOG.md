@@ -69,3 +69,13 @@
 - Supabase read-only verification: the security migration from PR #1 is already reflected in the active database (private admin helper exists; public helper is absent; anon cannot execute admin/trigger helpers; authenticated users have only the `full_name` column UPDATE grant). Security advisor currently reports only leaked-password protection disabled. No database changes were made.
 - Local clone/build was not possible in this run because the execution environment could not resolve `github.com`. Remote verification on commit `6fa35f1`: Web CI #45981983994 passed course/exercise validation, progress tests, storage tests and Vite build; Android Debug #45981983921 passed the same checks, Capacitor sync, Gradle `assembleDebug` (`BUILD SUCCESSFUL` in 1m 9s) and artifact upload (3,458,933 bytes).
 - Next priorities: reconcile account-sync PR #2 without cross-account progress merging, establish a committed lockfile/reproducible dependency install, and enable leaked-password protection in Supabase Auth settings.
+
+
+## 2026-11-28
+- Inspected current `main` before changes: head `420020c7`; latest Web CI #46002830771 and Android Debug #46002830896 both passed. Confirmed the repository had no `package-lock.json`, so `npm install` could resolve different transitive versions on different builds.
+- Added `.github/workflows/bootstrap-dependency-lock.yml` to generate and commit the npm lockfile from a GitHub runner, then verify a clean install and the app builds.
+- Generated `package-lock.json` (lockfile v3, 178 package entries). GitHub runner verified `npm ci`, course/exercise validation, progress/storage tests, Vite build, Capacitor sync and Gradle `assembleDebug`. Bootstrap run #46136816566 succeeded and uploaded a 3,458,979-byte verification APK.
+- Committed the lockfile in `25c28c1`. Updated Web CI, Android debug and signed-release workflows to use `npm ci --no-audit --no-fund`; added `package-lock.json` to the Web CI push path filter and updated local setup instructions in README. Commit: `1e23e7a`.
+- Final verification on `1e23e7a`: Web CI #46136990507 passed all validators/tests and Vite build; Android Debug #46136990493 passed the same checks, Capacitor sync, Gradle APK build and artifact upload (3,458,977 bytes).
+- Local npm lockfile generation timed out in this environment; the GitHub runner completed the generation and all verification successfully. No physical-device test or signed Android release build was performed.
+- Next: run a dependency security audit against the committed lockfile, inspect the remaining npm advisories before upgrading packages, and continue reconciling Supabase account-sync work with current `main`.
