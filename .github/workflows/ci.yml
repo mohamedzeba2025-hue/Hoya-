@@ -21,6 +21,7 @@ on:
       - "public/**"
       - "scripts/**"
       - "package.json"
+      - "package-lock.json"
       - "capacitor.config.json"
       - "index.html"
       - ".github/workflows/ci.yml"
@@ -37,7 +38,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install
+        run: npm ci --no-audit --no-fund
       - name: Validate lesson content
         run: npm run validate:courses
       - name: Validate exercise bank

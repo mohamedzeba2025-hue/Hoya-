@@ -10,10 +10,10 @@ Hoya is a mobile-first language-learning app for English, Spanish and Italian, b
 
 ## Run locally
 
-Requires Node.js 20 or later.
+Requires Node.js 20 or later. The committed lockfile keeps dependency versions reproducible.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
