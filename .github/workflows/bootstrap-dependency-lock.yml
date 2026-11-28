@@ -1,0 +1,80 @@
+name: Bootstrap Hoya dependency lockfile
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bootstrap-dependency-lock.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hoya-dependency-lock-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Generate npm lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Verify reproducible install
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate learning content and progress
+        run: |
+          npm run validate:courses
+          npm run validate:exercises
+          npm run test:progress
+          npm run test:storage
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync Android app
+        run: npx cap sync android
+
+      - name: Build debug APK
+        run: cd android && ./gradlew assembleDebug
+
+      - name: Upload verification APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: Hoya-APK-Lockfile-Verification
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+      - name: Commit generated lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "package-lock.json is already up to date."
+          else
+            git commit -m "Add reproducible npm dependency lockfile"
+            git push origin HEAD:main
+          fi
