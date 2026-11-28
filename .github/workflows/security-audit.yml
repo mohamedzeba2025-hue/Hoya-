@@ -1,0 +1,88 @@
+name: Hoya Dependency Security Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/security-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/security-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit locked dependencies
+        run: |
+          npm audit --json > "$RUNNER_TEMP/npm-audit.json" || true
+          node --input-type=commonjs <<'NODE'
+          const fs = require("node:fs");
+          const reportPath = process.env.RUNNER_TEMP + "/npm-audit.json";
+          const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+          const counts = report.metadata?.vulnerabilities;
+          if (!counts) {
+            throw new Error("npm audit did not return vulnerability metadata.");
+          }
+
+          const entries = Object.entries(report.vulnerabilities || {});
+          const lines = [
+            "## Hoya dependency audit",
+            "",
+            `Vulnerabilities: **${counts.critical || 0} critical**, **${counts.high || 0} high**, **${counts.moderate || 0} moderate**, **${counts.low || 0} low**.`,
+            ""
+          ];
+
+          if (entries.length) {
+            lines.push("| Package | Severity | Direct | Affected range | Fix available |");
+            lines.push("|---|---|---:|---|---|");
+            for (const [name, item] of entries) {
+              const ranges = [...new Set((item.via || [])
+                .filter(value => value && typeof value === "object")
+                .map(value => value.range)
+                .filter(Boolean))].join(", ") || "—";
+              const fix = item.fixAvailable === true
+                ? "Yes"
+                : item.fixAvailable === false
+                  ? "No"
+                  : item.fixAvailable
+                    ? JSON.stringify(item.fixAvailable)
+                    : "—";
+              lines.push(`| ${name} | ${item.severity} | ${item.isDirect ? "Yes" : "No"} | ${ranges} | ${fix} |`);
+            }
+          } else {
+            lines.push("No vulnerable packages reported.");
+          }
+
+          const summary = lines.join("\n") + "\n";
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          console.log(summary);
+
+          if ((counts.critical || 0) > 0 || (counts.high || 0) > 0) {
+            process.exitCode = 1;
+          }
+          NODE
