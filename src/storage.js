@@ -36,15 +36,23 @@ function sanitizeStoredValue(key, value, fallback) {
     for (const language of languages) {
       const progress = value[language];
       if (!isRecord(progress)) continue;
+
       const questionIndex = boundedInteger(progress.questionIndex, 0, 4, 0);
-      const score = boundedInteger(progress.score, 0, 5, 0);
-      const answer = boundedInteger(progress.answer, 0, 3, null);
+      const storedAnswer = boundedInteger(progress.answer, 0, 3, null);
+      const validated = progress.validated === true && storedAnswer !== null;
+      const answer = validated ? storedAnswer : null;
+
+      // Only questions before the current index (plus the current one when validated)
+      // can contribute to the saved score.
+      const answeredQuestions = Math.min(5, questionIndex + (validated ? 1 : 0));
+      const score = Math.min(answeredQuestions, boundedInteger(progress.score, 0, 5, 0));
+
       result[language] = {
         questionIndex,
         score,
         answer,
-        validated: progress.validated === true && answer !== null,
-        finished: progress.finished === true && questionIndex === 4,
+        validated,
+        finished: progress.finished === true && questionIndex === 4 && validated,
       };
     }
     return result;
@@ -94,7 +102,6 @@ export function readStoredXP(fallback = 120, storage) {
     return fallback;
   }
 }
-
 
 export function writeStored(key, value, storage) {
   try {
