@@ -54,24 +54,29 @@ const exercises = readStored("hoya_exercise_progress", {}, new MemoryStorage({
     en: { questionIndex: 99, score: -2, answer: 8, validated: true, finished: true, ignored: "x" },
     es: { questionIndex: 3, score: 4, answer: 2, validated: true, finished: false },
     fr: { questionIndex: 1, score: 1, answer: 0, validated: true, finished: false },
-    it: { questionIndex: 4, score: 5, answer: 3, validated: true, finished: true },
-    es: { questionIndex: 2, score: 5, answer: 1, validated: false, finished: true },
+    it: { questionIndex: 2, score: 3, answer: 1, validated: false, finished: true },
   }),
 }));
 assert.deepEqual(exercises, {
   en: { questionIndex: 0, score: 0, answer: null, validated: false, finished: false },
   es: { questionIndex: 3, score: 4, answer: 2, validated: true, finished: false },
+  it: { questionIndex: 2, score: 2, answer: null, validated: false, finished: false },
+});
+
+assert.deepEqual(readStored("hoya_exercise_progress", {}, new MemoryStorage({
+  hoya_exercise_progress: JSON.stringify({
+    it: { questionIndex: 4, score: 5, answer: 3, validated: true, finished: true },
+  }),
+})), {
   it: { questionIndex: 4, score: 5, answer: 3, validated: true, finished: true },
 });
 
 assert.deepEqual(readStored("hoya_exercise_progress", {}, new MemoryStorage({
   hoya_exercise_progress: JSON.stringify({
     en: { questionIndex: 1, score: 5, answer: 2, validated: false, finished: true },
-    it: { questionIndex: 2, score: 3, answer: 1, validated: false, finished: false },
   }),
 })), {
   en: { questionIndex: 1, score: 1, answer: null, validated: false, finished: false },
-  it: { questionIndex: 2, score: 2, answer: null, validated: false, finished: false },
 });
 
 const awarded = readStored("hoya_exercise_xp_awarded", {}, new MemoryStorage({
